@@ -1,0 +1,154 @@
+<?php
+
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class Kategori_obat extends CI_Controller
+{
+    function __construct()
+    {
+        parent::__construct();
+        is_login();
+        $this->load->model('Kategori_obat_model');
+        $this->load->library('form_validation');
+    }
+
+    public function index()
+    {
+        $q = urldecode($this->input->get('q', TRUE));
+        $start = intval($this->uri->segment(3));
+        
+        if ($q <> '') {
+            $config['base_url'] = base_url() . '.php/c_url/index.html?q=' . urlencode($q);
+            $config['first_url'] = base_url() . 'index.php/kategori_obat/index.html?q=' . urlencode($q);
+        } else {
+            $config['base_url'] = base_url() . 'index.php/kategori_obat/index/';
+            $config['first_url'] = base_url() . 'index.php/kategori_obat/index/';
+        }
+
+        $config['per_page'] = 10;
+        $config['page_query_string'] = FALSE;
+        $config['total_rows'] = $this->Kategori_obat_model->total_rows($q);
+        $kategori_obat = $this->Kategori_obat_model->get_limit_data($config['per_page'], $start, $q);
+        $config['full_tag_open'] = '<ul class="pagination pagination-sm no-margin pull-right">';
+        $config['full_tag_close'] = '</ul>';
+        $this->load->library('pagination');
+        $this->pagination->initialize($config);
+
+        $data = array(
+            'kategori_obat_data' => $kategori_obat,
+            'q' => $q,
+            'pagination' => $this->pagination->create_links(),
+            'total_rows' => $config['total_rows'],
+            'start' => $start,
+        );
+        $this->template->load('template','kategori_obat/kategori_obat_list', $data);
+    }
+
+    public function read($id) 
+    {
+        $row = $this->Kategori_obat_model->get_by_id($id);
+        if ($row) {
+            $data = array(
+		'id' => $row->id,
+		'ket' => $row->ket,
+	    );
+            $this->template->load('template','kategori_obat/kategori_obat_read', $data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('kategori_obat'));
+        }
+    }
+
+    public function create() 
+    {
+        $data = array(
+            'button' => 'Create',
+            'action' => site_url('kategori_obat/create_action'),
+	    'id' => set_value('id'),
+	    'ket' => set_value('ket'),
+	);
+        $this->template->load('template','kategori_obat/kategori_obat_form', $data);
+    }
+    
+    public function create_action() 
+    {
+        $this->_rules();
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->create();
+        } else {
+            $data = array(
+		'ket' => $this->input->post('ket',TRUE),
+	    );
+
+            $this->Kategori_obat_model->insert($data);
+            $this->session->set_flashdata('message', 'Create Record Success 2');
+            redirect(site_url('kategori_obat'));
+        }
+    }
+    
+    public function update($id) 
+    {
+        $row = $this->Kategori_obat_model->get_by_id($id);
+
+        if ($row) {
+            $data = array(
+                'button' => 'Update',
+                'action' => site_url('kategori_obat/update_action'),
+		'id' => set_value('id', $row->id),
+		'ket' => set_value('ket', $row->ket),
+	    );
+            $this->template->load('template','kategori_obat/kategori_obat_form', $data);
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('kategori_obat'));
+        }
+    }
+    
+    public function update_action() 
+    {
+        $this->_rules();
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->update($this->input->post('id', TRUE));
+        } else {
+            $data = array(
+		'ket' => $this->input->post('ket',TRUE),
+	    );
+
+            $this->Kategori_obat_model->update($this->input->post('id', TRUE), $data);
+            $this->session->set_flashdata('message', 'Update Record Success');
+            redirect(site_url('kategori_obat'));
+        }
+    }
+    
+    public function delete($id) 
+    {
+        $row = $this->Kategori_obat_model->get_by_id($id);
+
+        if ($row) {
+            $this->Kategori_obat_model->delete($id);
+            $this->session->set_flashdata('message', 'Delete Record Success');
+            redirect(site_url('kategori_obat'));
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('kategori_obat'));
+        }
+    }
+
+    public function _rules() 
+    {
+	$this->form_validation->set_rules('ket', 'ket', 'trim|required');
+
+	$this->form_validation->set_rules('id', 'id', 'trim');
+	$this->form_validation->set_error_delimiters('<span class="text-danger">', '</span>');
+    }
+
+}
+
+/* End of file Kategori_obat.php */
+/* Location: ./application/controllers/Kategori_obat.php */
+/* Please DO NOT modify this information : */
+/* Generated by Harviacode Codeigniter CRUD Generator 2020-01-27 21:49:22 */
+/* http://harviacode.com */
