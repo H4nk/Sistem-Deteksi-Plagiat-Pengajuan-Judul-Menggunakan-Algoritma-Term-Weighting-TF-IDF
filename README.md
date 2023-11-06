@@ -1,0 +1,2 @@
+# Sistem-Deteksi-Plagiat-Pengajuan-Judul-Menggunakan-Algoritma-Term-Weighting-TF-IDF
+Sistem deteksi plagiat pengajuan judul dengan menggunakan algoritma Term Weighting TF-IDF adalah sebuah solusi inovatif yang dirancang untuk mengidentifikasi dan mencegah tindakan plagiat dalam pengajuan judul tugas akhir, makalah ilmiah, atau karya tulis lainnya. Algoritma Term Weighting TF-IDF (Term Frequency-Inverse Document Frequency) 
